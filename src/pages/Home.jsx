@@ -29,7 +29,7 @@ const Home = () => {
           className="max-w-xl text-center lg:text-left"
         >
           <h1 className="text-5xl sm:text-6xl font-bold leading-tight">
-            <span className="text-blue-600 dark:text-red-400">My</span>Notebook
+            <span className="text-blue-600 dark:text-red-400">Notes</span>Hub
           </h1>
 
           <p className="mt-6 text-2xl font-semibold text-gray-700 dark:text-gray-300">
