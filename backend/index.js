@@ -2,28 +2,22 @@ const express = require("express");
 const app = express();
 const connectToDB = require("./database");
 const cors = require("cors");
-const path = require("path");
 
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8000;
 
-// ==============================
-// ✅ CONNECT DB
-// ==============================
+// ✅ Connect DB
 connectToDB();
 
-// ==============================
-// ✅ MIDDLEWARE
-// ==============================
+// ✅ Middleware
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
 // ==============================
-// ✅ API ROUTES
+// ✅ ROUTES
 // ==============================
 
-// Home
 app.get("/", (req, res) => {
   res.send("Welcome to MyNoteBook App 🚀");
 });
@@ -40,20 +34,8 @@ app.use("/api/v3.2/contact", require("./router/contact.router"));
 // Reviews
 app.use("/api/v3.2/reviews", require("./router/review.routes"));
 
-// Profile
+// Profile (🔥 Avatar + Profile handled here)
 app.use("/api/v3.2/profile", require("./router/profile.routes"));
-
-// ==============================
-// ✅ FRONTEND (React Build Serve)
-// ==============================
-
-// 🔥 Serve frontend build files
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-// 🔥 Handle React routing (VERY IMPORTANT FIX)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-});
 
 // ==============================
 // ✅ START SERVER
