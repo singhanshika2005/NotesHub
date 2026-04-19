@@ -122,7 +122,7 @@ function Login() {
               whileTap={{ scale: 0.97 }}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold shadow-md"
             >
-              Sign In
+              Login
             </motion.button>
           )}
         </form>

@@ -19,10 +19,10 @@ const authSchema = new mongoose.Schema({
         required: [true, "Email is required!"],
         minlength: [8, "Password must be atleast 8 characters!"]
     },
-    phone: {
-        type:String,
-        match: [/[+][9][1]-[6-9]\d{9}/, "Invalid phone number!"]
-    },
+   phone: {
+  type: String,
+  match: [/^(\+91|0)?[6-9]\d{9}$/, "Invalid phone number!"]
+},
     accountType: {
         type:String,
         enum:["user", "admin"],
