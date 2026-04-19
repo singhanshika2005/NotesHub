@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "../contextapi/AuthState";
 import { motion } from "framer-motion";
 
-// 💖 Cute + Classy Avatar Styles
+// 💖 Avatar Styles
 const styles = {
   male: ["micah", "notionists", "adventurer"],
   female: ["lorelei", "micah", "fun-emoji"],
@@ -22,7 +22,8 @@ const Profile = () => {
   const { profile, setProfile } = useAuthState();
   const [form, setForm] = useState({});
 
-  const API = "http://localhost:8000/api/v3.2/profile";
+  // ✅ FIXED: Use environment variable (IMPORTANT)
+  const API = import.meta.env.VITE_API_URL + "/profile";
 
   useEffect(() => {
     if (profile) setForm(profile);
@@ -36,17 +37,14 @@ const Profile = () => {
       setForm({
         ...form,
         gender: value,
-        avatar: getAvatar(
-          form.name || Date.now(),
-          value
-        ),
+        avatar: getAvatar(form.name || Date.now(), value),
       });
     } else {
       setForm({ ...form, [name]: value });
     }
   };
 
-  // ✅ Update Profile
+  // ✅ Update Profile (Improved)
   const handleUpdate = async () => {
     try {
       const res = await fetch(`${API}/${profile._id}`, {
@@ -57,15 +55,16 @@ const Profile = () => {
 
       const data = await res.json();
 
-      if (data.success) {
-        setProfile(data.user);
-        alert("Profile updated ✅");
-      } else {
-        alert(data.message);
+      if (!res.ok) {
+        throw new Error(data.message || "Update failed");
       }
+
+      setProfile(data.user);
+      alert("Profile updated ✅");
+
     } catch (err) {
-      console.log(err);
-      alert("Something went wrong");
+      console.error("UPDATE ERROR:", err.message);
+      alert(err.message || "Server not responding");
     }
   };
 
@@ -91,7 +90,7 @@ const Profile = () => {
           My Profile 👤
         </h2>
 
-        {/* 🌸 Avatar Section */}
+        {/* 🌸 Avatar */}
         <div className="flex flex-col items-center gap-3 mb-6">
           <div className="relative">
             <div className="absolute inset-0 rounded-full blur-md bg-gradient-to-tr from-pink-400 to-purple-500 opacity-40"></div>
@@ -102,6 +101,7 @@ const Profile = () => {
                   form.avatar ||
                   getAvatar("default", form.gender || "male")
                 }
+                alt="avatar"
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover bg-white"
               />
             </div>
