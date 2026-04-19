@@ -16,14 +16,15 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       user,
     });
 
   } catch (error) {
     console.log("GET PROFILE ERROR:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       success: false,
       message: "Server error",
     });
@@ -32,16 +33,21 @@ router.get("/:id", async (req, res) => {
 
 
 // ==============================
-// ✅ UPDATE PROFILE (INCLUDING AVATAR)
+// ✅ UPDATE PROFILE
 // ==============================
 router.put("/:id", async (req, res) => {
   try {
+    // 🔧 Optional: Clean phone number (+91 / 0 remove)
+    if (req.body.phone) {
+      req.body.phone = req.body.phone.replace(/^(\+91|0)/, "");
+    }
+
     const updatedUser = await Auth.findByIdAndUpdate(
       req.params.id,
-      req.body, // 👈 includes avatar also
+      req.body,
       {
-        new: true,
-        runValidators: true,
+        returnDocument: "after", // ✅ latest mongoose
+        runValidators: true,     // ✅ apply schema validation
       }
     ).select("-password");
 
@@ -52,7 +58,7 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
       user: updatedUser,
@@ -60,7 +66,16 @@ router.put("/:id", async (req, res) => {
 
   } catch (error) {
     console.log("UPDATE PROFILE ERROR:", error);
-    res.status(500).json({
+
+    // ✅ Handle validation errors properly
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: Object.values(error.errors)[0].message,
+      });
+    }
+
+    return res.status(500).json({
       success: false,
       message: "Server error",
     });
